@@ -1,60 +1,121 @@
-#!/bin/bash
-# Controller Remapper - Linux Build Script
-# This script builds the application for Linux with production settings
-# Note: Some system dependencies may need to be installed without sudo
+#!/usr/bin/env bash
+#
+# Controller Remapper - Linux Production Build
+#
 
-set -e
+set -Eeuo pipefail
 
 echo "========================================"
-echo "Controller Remapper - Linux Production Build"
+echo " Controller Remapper - Linux Build"
 echo "========================================"
-echo ""
+echo
 
-# Check if Rust is installed
-if ! command -v cargo &> /dev/null; then
-    echo "ERROR: Rust/Cargo not found. Please install Rust from https://rustup.rs/"
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+########################################
+# Dependency Checks
+########################################
+
+if ! command -v rustc >/dev/null 2>&1; then
+    echo "❌ Rust is not installed."
+    echo "Install it from:"
+    echo "https://rustup.rs/"
     exit 1
 fi
 
-# Install Tauri CLI if not present
-if ! cargo tauri --version &> /dev/null; then
-    echo "Installing Tauri CLI..."
-    cargo install tauri-cli --version "^2.0"
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "❌ Cargo not found."
+    exit 1
 fi
 
-# Navigate to project root
-cd "$(dirname "$0")/.."
+########################################
+# Ensure Tauri CLI
+########################################
 
-# Create build directory
+if ! cargo install --list | grep -q "^tauri-cli "; then
+    echo "Installing Tauri CLI..."
+    cargo install tauri-cli
+else
+    echo "✓ Tauri CLI already installed"
+fi
+
+########################################
+# Validate Project
+########################################
+
+if [[ ! -f src-tauri/tauri.conf.json && ! -f src-tauri/tauri.conf.json5 ]]; then
+    echo "❌ This does not appear to be a Tauri project."
+    exit 1
+fi
+
 mkdir -p build
 
-echo "Building release version with production optimizations..."
-echo "Note: If build fails due to missing system dependencies, you may need to install:"
-echo "  - libwebkit2gtk-4.1-dev"
-echo "  - libgtk-3-dev"
-echo "  - libayatana-appindicator3-dev"
-echo "  - librsvg2-dev"
-echo ""
+########################################
+# Helpful Dependency Info
+########################################
 
-cargo tauri build --release
+echo
+echo "Linux system packages may be required."
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Build failed"
-    echo ""
-    echo "If the error is about missing system libraries, try installing them:"
-    echo "  sudo apt-get install libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev"
-    echo ""
-    echo "Or use a container-based build (Docker/Podman) if you don't have sudo access."
+if command -v apt >/dev/null 2>&1; then
+    echo
+    echo "Ubuntu/Debian:"
+    echo "sudo apt install \\"
+    echo "    libwebkit2gtk-4.1-dev \\"
+    echo "    libgtk-3-dev \\"
+    echo "    libayatana-appindicator3-dev \\"
+    echo "    librsvg2-dev"
+elif command -v dnf >/dev/null 2>&1; then
+    echo
+    echo "Fedora:"
+    echo "sudo dnf install \\"
+    echo "    webkit2gtk4.1-devel \\"
+    echo "    gtk3-devel \\"
+    echo "    libappindicator-gtk3-devel \\"
+    echo "    librsvg2-devel"
+elif command -v pacman >/dev/null 2>&1; then
+    echo
+    echo "Arch Linux:"
+    echo "sudo pacman -S \\"
+    echo "    webkit2gtk \\"
+    echo "    gtk3 \\"
+    echo "    libappindicator-gtk3 \\"
+    echo "    librsvg"
+fi
+
+########################################
+# Build
+########################################
+
+echo
+echo "Building production release..."
+echo
+
+if ! cargo tauri build; then
+    echo
+    echo "❌ Build failed."
+    echo
+    echo "Most Linux build failures are caused by missing system libraries."
     exit 1
 fi
 
-echo ""
+echo
 echo "========================================"
-echo "Build completed successfully!"
+echo "✅ Build completed successfully!"
 echo "========================================"
-echo ""
-echo "Output location: src-tauri/target/release/bundle/"
-echo ""
+echo
 
+echo "Bundles generated:"
+
+find src-tauri/target/release/bundle \
+    -type f \
+    \( \
+        -name "*.AppImage" \
+        -o -name "*.deb" \
+        -o -name "*.rpm" \
+        -o -name "*.tar.gz" \
+    \)
+
+echo
 echo "Done!"
-exit 0
