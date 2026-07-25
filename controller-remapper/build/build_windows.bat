@@ -1,37 +1,71 @@
 @echo off
-REM Controller Remapper - Windows Build Script
-REM This script builds the application for Windows with production settings
+setlocal
 
 echo ========================================
-echo Controller Remapper - Windows Production Build
+echo  Controller Remapper - Windows Build
 echo ========================================
 echo.
 
-REM Check if Rust is installed
-where cargo >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Rust/Cargo not found. Please install Rust from https://rustup.rs/
+REM -------------------------------------------------
+REM Move to project root
+REM -------------------------------------------------
+
+cd /d "%~dp0.."
+
+REM -------------------------------------------------
+REM Dependency Checks
+REM -------------------------------------------------
+
+where rustc >nul 2>nul
+if errorlevel 1 (
+    echo ERROR: Rust is not installed.
+    echo Install it from:
+    echo https://rustup.rs/
     exit /b 1
 )
 
-REM Install Tauri CLI if not present
-cargo tauri --version >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    echo Installing Tauri CLI...
-    cargo install tauri-cli --version "^2.0"
+where cargo >nul 2>nul
+if errorlevel 1 (
+    echo ERROR: Cargo not found.
+    exit /b 1
 )
 
-REM Navigate to project root
-cd /d "%~dp0.."
+REM -------------------------------------------------
+REM Ensure Tauri CLI
+REM -------------------------------------------------
 
-REM Create build directory
+cargo install --list | findstr /B "tauri-cli" >nul
+if errorlevel 1 (
+    echo Installing Tauri CLI...
+    cargo install tauri-cli
+)
+
+REM -------------------------------------------------
+REM Validate Project
+REM -------------------------------------------------
+
+if not exist src-tauri\tauri.conf.json (
+    if not exist src-tauri\tauri.conf.json5 (
+        echo ERROR: This does not appear to be a Tauri project.
+        exit /b 1
+    )
+)
+
 if not exist build mkdir build
 
-echo Building release version with production optimizations...
-cargo tauri build --release
+REM -------------------------------------------------
+REM Build
+REM -------------------------------------------------
 
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Build failed
+echo.
+echo Building production release...
+echo.
+
+cargo tauri build
+
+if errorlevel 1 (
+    echo.
+    echo ERROR: Build failed.
     exit /b 1
 )
 
@@ -40,8 +74,13 @@ echo ========================================
 echo Build completed successfully!
 echo ========================================
 echo.
-echo Output location: src-tauri\target\release\bundle\
-echo.
 
+echo Generated bundles:
+dir /b /s src-tauri\target\release\bundle\*.msi 2>nul
+dir /b /s src-tauri\target\release\bundle\*.exe 2>nul
+
+echo.
 echo Done!
+
+endlocal
 exit /b 0
