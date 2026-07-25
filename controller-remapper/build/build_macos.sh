@@ -1,57 +1,95 @@
-#!/bin/bash
-# Controller Remapper - macOS Build Script
-# This script builds the application for macOS with production settings
+#!/usr/bin/env bash
+#
+# Controller Remapper - macOS Production Build Script
+#
 
-set -e
+set -Eeuo pipefail
 
 echo "========================================"
-echo "Controller Remapper - macOS Production Build"
+echo " Controller Remapper - macOS Build"
 echo "========================================"
-echo ""
+echo
 
-# Check if Rust is installed
-if ! command -v cargo &> /dev/null; then
-    echo "ERROR: Rust/Cargo not found. Please install Rust from https://rustup.rs/"
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+########################################
+# Dependency Checks
+########################################
+
+if ! command -v rustc >/dev/null 2>&1; then
+    echo "❌ Rust is not installed."
+    echo "Install it from:"
+    echo "https://rustup.rs/"
     exit 1
 fi
 
-# Check if Homebrew is installed
-if ! command -v brew &> /dev/null; then
-    echo "ERROR: Homebrew not found. Please install Homebrew from https://brew.sh/"
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "❌ Cargo not found."
     exit 1
 fi
 
-# Install system dependencies
-echo "Installing system dependencies..."
-brew install pkg-config
+if ! command -v brew >/dev/null 2>&1; then
+    echo "❌ Homebrew not found."
+    echo "https://brew.sh/"
+    exit 1
+fi
 
-# Install Tauri CLI if not present
-if ! cargo tauri --version &> /dev/null; then
+########################################
+# Ensure pkg-config exists
+########################################
+
+if ! brew list pkg-config >/dev/null 2>&1; then
+    echo "Installing pkg-config..."
+    brew install pkg-config
+else
+    echo "✓ pkg-config already installed"
+fi
+
+########################################
+# Ensure Tauri CLI exists
+########################################
+
+if ! cargo install --list | grep -q "^tauri-cli "; then
     echo "Installing Tauri CLI..."
-    cargo install tauri-cli --version "^2.0"
+    cargo install tauri-cli
+else
+    echo "✓ Tauri CLI already installed"
 fi
 
-# Navigate to project root
-cd "$(dirname "$0")/.."
+########################################
+# Validate Project
+########################################
 
-# Create build directory
+if [[ ! -f "src-tauri/tauri.conf.json" && ! -f "src-tauri/tauri.conf.json5" ]]; then
+    echo "❌ Not a Tauri project."
+    exit 1
+fi
+
 mkdir -p build
 
-echo "Building release version with production optimizations..."
-cargo tauri build --release
+########################################
+# Build
+########################################
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Build failed"
-    exit 1
-fi
+echo
+echo "Building production release..."
+echo
 
-echo ""
+cargo tauri build
+
+echo
 echo "========================================"
-echo "Build completed successfully!"
+echo "✅ Build completed successfully!"
 echo "========================================"
-echo ""
-echo "Output location: src-tauri/target/release/bundle/macos/"
-echo ""
+echo
 
+echo "Bundles are located in:"
+echo "src-tauri/target/release/bundle/"
+echo
+
+find src-tauri/target/release/bundle -maxdepth 2 -type f \
+    \( -name "*.app" -o -name "*.dmg" -o -name "*.pkg" \)
+
+echo
 echo "Done!"
-exit 0
