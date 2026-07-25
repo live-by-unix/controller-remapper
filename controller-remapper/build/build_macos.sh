@@ -57,16 +57,7 @@ else
     echo "✓ Tauri CLI already installed"
 fi
 
-########################################
-# Validate Project
-########################################
-
-if [[ ! -f "src-tauri/tauri.conf.json" && ! -f "src-tauri/tauri.conf.json5" ]]; then
-    echo "❌ Not a Tauri project."
-    exit 1
-fi
-
-mkdir -p build
+mkdir -p build_releases
 
 ########################################
 # Build
