@@ -40,7 +40,7 @@ else
     echo "✓ Tauri CLI already installed"
 fi
 
-mkdir -p build
+mkdir -p build_releases
 
 ########################################
 # Helpful Dependency Info
