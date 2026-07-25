@@ -1,0 +1,53 @@
+[package]
+name = "controller-remapper"
+version = "1.0.0"
+description = "A Steam utility for mapping controller buttons to keyboard keys with Workshop integration"
+authors = ["Controller Remapper Team"]
+license = "MIT"
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hidapi = "2.6"
+sdl2 = "0.36"
+tokio = { version = "1", features = ["full"] }
+ anyhow = "1"
+thiserror = "1"
+log = "0.4"
+env_logger = "0.11"
+dirs = "5"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+steamworks = "0.11"
+
+# Platform-specific dependencies
+[target.'cfg(target_os = "linux")'.dependencies]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+corebluetooth = "0.1"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+
+[dev-dependencies]
+mockall = "0.12"
+tempfile = "3"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Enable link-time optimization
+codegen-units = 1   # Better optimization, slower compile
+strip = true        # Remove debug symbols
+panic = "abort"     # Smaller binary size

@@ -1,0 +1,46 @@
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Tauri
+/src-tauri/target/
+/src-tauri/Cargo.lock
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+/build/output/
+*.msi
+*.dmg
+*.deb
+*.AppImage
+
+# Steam
+steam_appid.txt
+
+# Profiles (local development)
+*.json
+!assets/profiles/*.json
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local

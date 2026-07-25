@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controller Remapper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="8" width="28" height="16" rx="4" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="8" cy="16" r="2" fill="currentColor"/>
+                        <circle cx="24" cy="16" r="2" fill="currentColor"/>
+                        <circle cx="16" cy="12" r="2" fill="currentColor"/>
+                        <circle cx="16" cy="20" r="2" fill="currentColor"/>
+                    </svg>
+                    <h1>Controller Remapper</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="steamStatus" class="btn btn-secondary">
+                        <span class="status-indicator offline"></span>
+                        Steam: Disconnected
+                    </button>
+                    <button id="settingsBtn" class="btn btn-icon" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="10" cy="10" r="3"/>
+                            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav">
+                    <button class="nav-item active" data-section="controllers">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="16" height="12" rx="2"/>
+                            <circle cx="5" cy="10" r="1"/>
+                            <circle cx="15" cy="10" r="1"/>
+                        </svg>
+                        Controllers
+                    </button>
+                    <button class="nav-item" data-section="profiles">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12h6M9 8h6M5 12h.01M5 8h.01M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
+                        </svg>
+                        Profiles
+                    </button>
+                    <button class="nav-item" data-section="workshop">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 2L2 7l8 5 8-5-8-5zM2 17l8 5 8-5M2 12l8 5 8-5"/>
+                        </svg>
+                        Workshop
+                    </button>
+                    <button class="nav-item" data-section="cloud">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12a4 4 0 014-4h6a4 4 0 014 4v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2z"/>
+                            <path d="M10 2v2M10 18v2M3 10h2M15 10h2"/>
+                        </svg>
+                        Cloud Sync
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Controllers Section -->
+                <section id="controllers-section" class="section active">
+                    <div class="section-header">
+                        <h2>Controllers</h2>
+                        <button id="scanControllers" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 2v4M8 10v4M2 8h4M10 8h4"/>
+                            </svg>
+                            Scan for Controllers
+                        </button>
+                    </div>
+                    
+                    <div id="controllersList" class="controllers-list">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="4" y="12" width="40" height="24" rx="6"/>
+                                <circle cx="12" cy="24" r="3"/>
+                                <circle cx="36" cy="24" r="3"/>
+                                <circle cx="24" cy="18" r="3"/>
+                                <circle cx="24" cy="30" r="3"/>
+                            </svg>
+                            <p>No controllers detected</p>
+                            <p class="text-muted">Click "Scan for Controllers" to detect connected devices</p>
+                        </div>
+                    </div>
+
+                    <!-- Controller Mapping UI -->
+                    <div id="mappingSection" class="mapping-section hidden">
+                        <div class="mapping-header">
+                            <h3>Button Mapping</h3>
+                            <div class="mapping-actions">
+                                <button id="clearMappings" class="btn btn-secondary">Clear All</button>
+                                <button id="saveMapping" class="btn btn-primary">Save to Profile</button>
+                            </div>
+                        </div>
+                        
+                        <div class="controller-layout">
+                            <!-- Visual Controller Representation -->
+                            <div class="controller-visual">
+                                <div class="controller-body">
+                                    <!-- Left Stick -->
+                                    <div class="controller-stick left-stick" data-button="leftstick">
+                                        <div class="stick-cap"></div>
+                                    </div>
+                                    
+                                    <!-- D-Pad -->
+                                    <div class="controller-dpad">
+                                        <div class="dpad-button" data-button="dpadup">↑</div>
+                                        <div class="dpad-button" data-button="dpaddown">↓</div>
+                                        <div class="dpad-button" data-button="dpadleft">←</div>
+                                        <div class="dpad-button" data-button="dpadright">→</div>
+                                    </div>
+                                    
+                                    <!-- Face Buttons -->
+                                    <div class="controller-face-buttons">
+                                        <div class="face-button" data-button="y">Y</div>
+                                        <div class="face-button" data-button="x">X</div>
+                                        <div class="face-button" data-button="b">B</div>
+                                        <div class="face-button" data-button="a">A</div>
+                                    </div>
+                                    
+                                    <!-- Right Stick -->
+                                    <div class="controller-stick right-stick" data-button="rightstick">
+                                        <div class="stick-cap"></div>
+                                    </div>
+                                    
+                                    <!-- Shoulder Buttons -->
+                                    <div class="shoulder-buttons">
+                                        <div class="shoulder-button" data-button="leftshoulder">L</div>
+                                        <div class="shoulder-button" data-button="rightshoulder">R</div>
+                                    </div>
+                                    
+                                    <!-- Center Buttons -->
+                                    <div class="center-buttons">
+                                        <div class="center-button" data-button="back">BACK</div>
+                                        <div class="center-button" data-button="guide">GUIDE</div>
+                                        <div class="center-button" data-button="start">START</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mapping List -->
+                            <div class="mapping-list">
+                                <div class="mapping-list-header">
+                                    <h4>Active Mappings</h4>
+                                </div>
+                                <div id="mappingsList" class="mappings-items">
+                                    <!-- Mappings will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profiles Section -->
+                <section id="profiles-section" class="section">
+                    <div class="section-header">
+                        <h2>Profiles</h2>
+                        <button id="createProfile" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 2v12M2 8h12"/>
+                            </svg>
+                            Create Profile
+                        </button>
+                    </div>
+                    
+                    <div class="profiles-toolbar">
+                        <input type="text" id="searchProfiles" placeholder="Search profiles..." class="input">
+                        <select id="filterGame" class="select">
+                            <option value="">All Games</option>
+                        </select>
+                    </div>
+                    
+                    <div id="profilesList" class="profiles-grid">
+                        <!-- Profiles will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Workshop Section -->
+                <section id="workshop-section" class="section">
+                    <div class="section-header">
+                        <h2>Steam Workshop</h2>
+                    </div>
+                    
+                    <div class="workshop-toolbar">
+                        <input type="text" id="searchWorkshop" placeholder="Search Workshop..." class="input">
+                        <button id="searchWorkshopBtn" class="btn btn-primary">Search</button>
+                    </div>
+                    
+                    <div class="workshop-tabs">
+                        <button class="tab-btn active" data-tab="browse">Browse</button>
+                        <button class="tab-btn" data-tab="subscribed">Subscribed</button>
+                        <button class="tab-btn" data-tab="my-items">My Items</button>
+                    </div>
+                    
+                    <div id="workshopContent" class="workshop-content">
+                        <!-- Workshop items will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Cloud Sync Section -->
+                <section id="cloud-section" class="section">
+                    <div class="section-header">
+                        <h2>Cloud Sync</h2>
+                        <button id="syncCloud" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 8v6a2 2 0 002 2h10a2 2 0 002-2V8M8 1v10M3 6l5-5 5 5"/>
+                            </svg>
+                            Sync Now
+                        </button>
+                    </div>
+                    
+                    <div class="cloud-status">
+                        <div class="status-card">
+                            <h3>Cloud Status</h3>
+                            <div class="status-info">
+                                <span class="status-label">Status:</span>
+                                <span id="cloudStatus" class="status-value">Checking...</span>
+                            </div>
+                            <div class="status-info">
+                                <span class="status-label">Quota:</span>
+                                <span id="cloudQuota" class="status-value">-- / --</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloud-profiles">
+                        <h3>Cloud Profiles</h3>
+                        <div id="cloudProfilesList" class="profiles-grid">
+                            <!-- Cloud profiles will be populated here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Modal -->
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Modal Title</h3>
+                    <button id="modalClose" class="btn btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 6l8 8M6 14L14 6"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modalBody" class="modal-body">
+                    <!-- Modal content will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Capture Modal -->
+        <div id="keyCaptureModal" class="modal hidden">
+            <div class="modal-content key-capture">
+                <div class="key-capture-content">
+                    <h3>Press a Key</h3>
+                    <p>Press any keyboard key to map it to this button</p>
+                    <div id="capturedKey" class="captured-key">...</div>
+                    <button id="cancelKeyCapture" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

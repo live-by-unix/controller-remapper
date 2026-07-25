@@ -1,0 +1,124 @@
+{
+  "id": "fps-default-001",
+  "name": "FPS Default",
+  "description": "Standard FPS game controller mapping with WASD movement and mouse aim",
+  "game_name": "FPS Games",
+  "author": "Controller Remapper Team",
+  "version": "2.0.0",
+  "button_mappings": [
+    {
+      "controller_button": "A",
+      "output_action": {"Keyboard": "Space"},
+      "enabled": true
+    },
+    {
+      "controller_button": "B",
+      "output_action": {"Keyboard": "KeyC"},
+      "enabled": true
+    },
+    {
+      "controller_button": "X",
+      "output_action": {"Keyboard": "KeyR"},
+      "enabled": true
+    },
+    {
+      "controller_button": "Y",
+      "output_action": {"Keyboard": "KeyF"},
+      "enabled": true
+    },
+    {
+      "controller_button": "LeftShoulder",
+      "output_action": {"Keyboard": "KeyQ"},
+      "enabled": true
+    },
+    {
+      "controller_button": "RightShoulder",
+      "output_action": {"Keyboard": "KeyE"},
+      "enabled": true
+    },
+    {
+      "controller_button": "Back",
+      "output_action": {"Keyboard": "Tab"},
+      "enabled": true
+    },
+    {
+      "controller_button": "Start",
+      "output_action": {"Keyboard": "Escape"},
+      "enabled": true
+    },
+    {
+      "controller_button": "LeftStick",
+      "output_action": {"Keyboard": "ShiftLeft"},
+      "enabled": true
+    },
+    {
+      "controller_button": "RightTrigger",
+      "output_action": {"Mouse": {"Button": "Left"}},
+      "enabled": true
+    },
+    {
+      "controller_button": "LeftTrigger",
+      "output_action": {"Mouse": {"Button": "Right"}},
+      "enabled": true
+    },
+    {
+      "controller_button": "DpadUp",
+      "output_action": {"Keyboard": "Key1"},
+      "enabled": true
+    },
+    {
+      "controller_button": "DpadDown",
+      "output_action": {"Keyboard": "Key2"},
+      "enabled": true
+    },
+    {
+      "controller_button": "DpadLeft",
+      "output_action": {"Keyboard": "Key3"},
+      "enabled": true
+    },
+    {
+      "controller_button": "DpadRight",
+      "output_action": {"Keyboard": "Key4"},
+      "enabled": true
+    }
+  ],
+  "axis_mappings": [
+    {
+      "controller_axis": "LeftX",
+      "output_positive": {"Keyboard": "KeyD"},
+      "output_negative": {"Keyboard": "KeyA"},
+      "deadzone": 0.15,
+      "sensitivity": 1.0,
+      "enabled": true
+    },
+    {
+      "controller_axis": "LeftY",
+      "output_positive": {"Keyboard": "KeyS"},
+      "output_negative": {"Keyboard": "KeyW"},
+      "deadzone": 0.15,
+      "sensitivity": 1.0,
+      "enabled": true
+    },
+    {
+      "controller_axis": "RightX",
+      "output_positive": {"Mouse": "MoveX"},
+      "output_negative": {"Mouse": "MoveX"},
+      "deadzone": 0.15,
+      "sensitivity": 1.5,
+      "enabled": true
+    },
+    {
+      "controller_axis": "RightY",
+      "output_positive": {"Mouse": "MoveY"},
+      "output_negative": {"Mouse": "MoveY"},
+      "deadzone": 0.15,
+      "sensitivity": 1.5,
+      "enabled": true
+    }
+  ],
+  "created_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2024-01-01T00:00:00Z",
+  "tags": ["fps", "shooter", "default", "mouse"],
+  "is_public": true,
+  "steam_workshop_id": null
+}
