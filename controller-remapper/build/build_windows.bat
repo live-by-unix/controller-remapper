@@ -40,18 +40,7 @@ if errorlevel 1 (
     cargo install tauri-cli
 )
 
-REM -------------------------------------------------
-REM Validate Project
-REM -------------------------------------------------
-
-if not exist src-tauri\tauri.conf.json (
-    if not exist src-tauri\tauri.conf.json5 (
-        echo ERROR: This does not appear to be a Tauri project.
-        exit /b 1
-    )
-)
-
-if not exist build mkdir build
+if not exist build mkdir build_release
 
 REM -------------------------------------------------
 REM Build
